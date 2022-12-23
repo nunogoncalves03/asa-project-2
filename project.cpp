@@ -50,7 +50,7 @@ void union_set(int x, int y)
 
 int kruskal(int vertices)
 {
-    int result = 0;
+    int result = 0, count = 0;
 
     for (int i = 0; i < vertices; i++)
     {
@@ -67,6 +67,7 @@ int kruskal(int vertices)
         {
             union_set(edge.source, edge.destination);
             result += edge.weight;
+            if (++count == vertices -1) return result;  // MST size = V - 1
         }
     }
 
