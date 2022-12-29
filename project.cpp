@@ -15,17 +15,17 @@ typedef struct
     int rank;
 } node_t;
 
-std::vector<edge_t> edge_list;
-std::vector<node_t> nodes;
+static std::vector<node_t> nodes;
+static std::vector<edge_t> edge_list;
 
 int find_set(int x)
 {
-    if (x != nodes.at(x).parent)
+    if (x != nodes[x].parent)
     {
-        nodes.at(x).parent = find_set(nodes.at(x).parent);
+        nodes[x].parent = find_set(nodes[x].parent);
     }
 
-    return nodes.at(x).parent;
+    return nodes[x].parent;
 }
 
 void union_set(int x, int y)
@@ -33,17 +33,17 @@ void union_set(int x, int y)
     x = find_set(x);
     y = find_set(y);
 
-    if (nodes.at(x).rank > nodes.at(y).rank)
+    if (nodes[x].rank > nodes[y].rank)
     {
-        nodes.at(y).parent = x;
+        nodes[y].parent = x;
     }
     else
     {
-        nodes.at(x).parent = y;
+        nodes[x].parent = y;
 
-        if (nodes.at(x).rank == nodes.at(y).rank)
+        if (nodes[x].rank == nodes[y].rank)
         {
-            nodes.at(y).rank++;
+            nodes[y].rank++;
         }
     }
 }
@@ -52,9 +52,11 @@ int kruskal(int vertices)
 {
     int result = 0, count = 0;
 
+    node_t new_subset;
     for (int i = 0; i < vertices; i++)
     {
-        node_t new_subset = {i, 0};
+        new_subset.parent = i;
+        new_subset.rank = 0;
         nodes.push_back(new_subset);
     }
 
@@ -67,7 +69,8 @@ int kruskal(int vertices)
         {
             union_set(edge.source, edge.destination);
             result += edge.weight;
-            if (++count == vertices -1) return result;  // MST size = V - 1
+            if (++count == vertices - 1)
+                return result;
         }
     }
 
@@ -77,12 +80,15 @@ int kruskal(int vertices)
 int main()
 {
     int vertices, edges;
-    std::cin >> vertices >> edges;
+    scanf("%d %d", &vertices, &edges);
 
+    nodes.reserve(vertices);
+    edge_list.reserve(edges);
+
+    edge_t new_edge;
     for (int i = 0; i < edges; i++)
     {
-        edge_t new_edge;
-        std::cin >> new_edge.source >> new_edge.destination >> new_edge.weight;
+        scanf("%d %d %d", &new_edge.source, &new_edge.destination, &new_edge.weight);
         new_edge.source--;
         new_edge.destination--;
         edge_list.push_back(new_edge);
